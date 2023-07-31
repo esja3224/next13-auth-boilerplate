@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import KeycloakProvider from "next-auth/providers/keycloak";
 
@@ -10,8 +11,18 @@ export const authOptions: NextAuthOptions = {
       })
   ],
   callbacks: {
-    async jwt({ token }) {
-      console.log(token)
+    async session({ session, token }) {
+      session.token = token;
+      return session
+    },
+    async jwt({ token, trigger, account, session }) {
+      if (trigger === "signIn") {
+        token.id = randomUUID()
+        console.log(token)
+        console.log(account)
+        console.log(session)
+      }
+      console.log("normal token", token)
       return token
     },
   },
