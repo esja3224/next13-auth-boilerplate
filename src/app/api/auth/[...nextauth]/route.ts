@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import NextAuth, { Account, NextAuthOptions } from 'next-auth';
 import KeycloakProvider from "next-auth/providers/keycloak";
 import { TOKEN_STATE, TOKEN_TYPES } from '@/src/lib/constants';
-import { cacheToken } from '@/src/lib/tokenCache';
+import { cacheToken, deleteTokenFromCache } from '@/src/lib/tokenCache';
 import refreshAccessToken from '@/src/lib/refreshAccessToken';
 import { getTokenExpiryFromCache } from '../../../../lib/tokenCache';
 import { JWT } from 'next-auth/jwt';
@@ -59,6 +59,10 @@ export const authOptions: NextAuthOptions = {
     },
     async signOut({ token }) {
         console.log(`${token.name} signed out.`)
+
+        // Session has been deleted, clean up cached tokens
+        deleteTokenFromCache(token.id, TOKEN_TYPES.ACCESS_TOKEN)
+        deleteTokenFromCache(token.id, TOKEN_TYPES.REFRESH_TOKEN)
     }
   }
 };
