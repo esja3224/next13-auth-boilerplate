@@ -1,4 +1,4 @@
-import { cache, getExpiryFromCache, getFromCache } from "./redisClient"
+import { cache, getExpiryFromCache, getFromCache, deleteFromCache } from "./redisClient"
 
 export const cacheToken = async (token: JWTWithExpiry, sessionId: string) => {
     await cache(tokenKey(sessionId, token.type), token.token, token.expires_in)
@@ -10,6 +10,10 @@ export const getTokenExpiryFromCache = async(sessionId: string, type: string) =>
 
 export const getTokenFromCache = async(sessionId: string, type: string) => {
     return await getFromCache(tokenKey(sessionId, type))
+}
+
+export const deleteTokenFromCache = async(sessionId: string, type: string) => {
+    return await deleteFromCache(tokenKey(sessionId, type))
 }
 
 const tokenKey = (sessionId: string, type: string) => `${sessionId}-${type}`

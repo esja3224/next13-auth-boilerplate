@@ -14,6 +14,10 @@ export const cache = async (key: string, value: string, expiry?: number) => {
     return expiry ? await cacheWithExpiry(key, value, expiry) : cacheWithoutExpiry(key, value) 
 }
 
+export const deleteFromCache = async(key: string) => {
+    return await redis.del(key)
+}
+
 const cacheWithoutExpiry = async (key: string, value: string) => {
     return await redis.set(key, value)
 }
