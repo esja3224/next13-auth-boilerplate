@@ -1,10 +1,9 @@
 import { randomUUID } from 'crypto';
 import NextAuth, { Account, NextAuthOptions } from 'next-auth';
 import KeycloakProvider from "next-auth/providers/keycloak";
-import { TOKEN_STATE, TOKEN_TYPES } from '@/src/lib/constants';
-import { cacheToken, deleteTokenFromCache } from '@/src/lib/tokenCache';
-import refreshAccessToken from '@/src/lib/refreshAccessToken';
-import { getTokenExpiryFromCache } from '../../../../lib/tokenCache';
+import { TOKEN_STATE, TOKEN_TYPES } from '../../../../lib/constants';
+import { cacheToken, deleteTokenFromCache, getTokenExpiryFromCache } from '../../../../lib/tokenCache';
+import refreshAccessToken from '../../../../lib/refreshAccessToken';
 import { JWT } from 'next-auth/jwt';
 
 const ONE_MINUTE = 60 * 1000
