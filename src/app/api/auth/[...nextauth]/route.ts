@@ -15,12 +15,17 @@ export const authOptions: NextAuthOptions = {
       })
   ],
   callbacks: {
+    async session({session, token}) {
+      session.refresh_token_expiry = token.refresh_token_expiry,
+      session.refresh_token_state = token.refresh_token_state
+      return session
+    },
     async jwt({ token, trigger, account }) {
       if (trigger === "signIn") {
         // assign ID to identify session
         const sessionId = randomUUID()
         token.id = sessionId
-        token.refreshTokenExpiry = account?.refresh_expires_in ?? 0
+        token.refresh_token_expiry = account?.refresh_expires_in ?? 0
         // extract tokens
         const access_token: JWTWithExpiry = {
           token: account?.access_token ?? "",
@@ -44,7 +49,7 @@ export const authOptions: NextAuthOptions = {
       const accessTokenExpiry = await getTokenExpiryFromCache(token.id as string, TOKEN_TYPES.ACCESS_TOKEN)
       const refreshTokenExpiry = await getTokenExpiryFromCache(token.id as string, TOKEN_TYPES.REFRESH_TOKEN)
 
-      token.refreshTokenExpiry = refreshTokenExpiry
+      token.refresh_token_expiry = refreshTokenExpiry
       // METHOD TO SET STATE AND REFRESH EXPIRY TIME ON TOKEN
 
       const ONE_MINUTE = 60 * 1000
@@ -52,24 +57,24 @@ export const authOptions: NextAuthOptions = {
       const TEN_MINUTES = 10 * ONE_MINUTE;
 
       if (refreshTokenExpiry <= ZERO_MINUTES)
-        token.refreshTokenState = TOKEN_STATE.EXPIRED
+        token.refresh_token_state = TOKEN_STATE.EXPIRED
       else if (refreshTokenExpiry < TEN_MINUTES)
-        token.refreshTokenState = TOKEN_STATE.LESS_THAN_TEN_MINUTES
+        token.refresh_token_state = TOKEN_STATE.LESS_THAN_TEN_MINUTES
       else 
-        token.refreshTokenState = TOKEN_STATE.MORE_THAN_TEN_MINUTES
+        token.refresh_token_state = TOKEN_STATE.MORE_THAN_TEN_MINUTES
 
-      // refresh access token if NECESSARY?
+      // refresh access token if necessary
       // if access token not expiring in a minute, do nothing
       if (accessTokenExpiry > ONE_MINUTE)
          return token;
 
       if (refreshTokenExpiry > ZERO_MINUTES)
         try {
-          refreshAccessToken(token.id as string)
+          refreshAccessToken(token.id)
         } catch (e) {
           // Assume any error means token is expired, re-trigger sign in?
-          token.refreshTokenState = TOKEN_STATE.EXPIRED
-          token.refreshTokenExpiry = ZERO_MINUTES
+          token.refresh_token_state = TOKEN_STATE.EXPIRED
+          token.refresh_token_expiry = ZERO_MINUTES
         }
       return token
     },
