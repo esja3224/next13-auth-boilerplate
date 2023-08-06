@@ -1,8 +1,9 @@
 'use client';
 
-import { TOKEN_STATE } from '@/src/lib/constants';
 import { signOut, useSession } from 'next-auth/react';
+import React from 'react';
 import { useEffect } from 'react';
+import { TOKEN_STATE } from '../../lib/constants';
 
 export default function Skeleton({
   children,
