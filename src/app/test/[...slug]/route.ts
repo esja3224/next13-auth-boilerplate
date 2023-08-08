@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 
-// Test route to mock the backend API
+// Test route to mock the backend API - can delete
 async function handler(request: NextRequest) {
     console.log(request.headers)
     return NextResponse.json({ hello: "world" })
