@@ -4,7 +4,7 @@ import { getToken } from 'next-auth/jwt';
 import { TOKEN_TYPES } from '../../../lib/constants';
  
 async function handler(request: NextRequest, context: {params: {slug: string}}) {
-  const BACKEND_BASE_URL = "http://localhost:3000/test/"
+  const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL
   const rewriteURL = new URL(context.params.slug, BACKEND_BASE_URL)
 
   const token = await getToken({req: request})
