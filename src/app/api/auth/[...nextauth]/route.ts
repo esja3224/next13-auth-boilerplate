@@ -76,11 +76,9 @@ const handleTokensOnSignIn = async (token: JWT, account: Account | null) => {
     const sessionId = randomUUID()
     token.id = sessionId
 
-    // Update refresh token expiry
     const refreshTokenExpiry = account?.refresh_expires_in ?? 0
     updateTokenWithRefreshTokenExpiry(token, refreshTokenExpiry)
 
-    // Cache tokens
     cacheTokens(account, sessionId)
 }
 
@@ -107,7 +105,6 @@ const cacheTokens = async (account: Account | null, sessionId: string) => {
     type: TOKEN_TYPES.REFRESH_TOKEN
   }
 
-  // Cache tokens
   await cacheToken(access_token, sessionId)
   await cacheToken(refresh_token, sessionId)
 } 

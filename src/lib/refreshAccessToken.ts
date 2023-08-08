@@ -25,16 +25,13 @@ const refreshAccessToken = async (id: string) => {
             refresh_token: refreshToken
         }),
     };
-    fetch(tokenURL, options)
-    .then((response) => response.json())
-    .then(async (data) => {
-        const accessToken: JWTWithExpiry = {
-            token: data.access_token,
-            expires_in: data.expires_in,
-            type: TOKEN_TYPES.ACCESS_TOKEN
-        }
-        await cacheToken(accessToken, id)
-    });
+    const response = await (await fetch(tokenURL, options)).json()
+    const accessToken: JWTWithExpiry = {
+        token: response.access_token,
+        expires_in: response.expires_in,
+        type: TOKEN_TYPES.ACCESS_TOKEN
+    }
+    await cacheToken(accessToken, id)
 }
 
 export default refreshAccessToken;
